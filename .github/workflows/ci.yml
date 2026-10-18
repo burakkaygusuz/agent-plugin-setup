@@ -1,0 +1,24 @@
+name: agent-plugin-setup ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli@0.49.1 '**/*.md'
+      - name: Validate the skill
+        run: |
+          pip install "git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379#subdirectory=skills-ref"
+          skills-ref validate .
